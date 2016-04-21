@@ -1,0 +1,95 @@
+#!/usr/bin/ruby
+
+#ils 
+require 'droplet_kit'
+
+usage = 'cluster-monkey <command>'
+
+if ARGV.length == 0
+  puts usage
+  exit(1)
+end
+
+command = ARGV[0]
+
+def auth
+  file = File.open('api.key')
+  token = file.read
+  @client = DropletKit::Client.new(access_token: token)
+end
+
+def create_loadbalancers
+  lb01 = DropletKit::Droplet.new(name: 'loadbalancer01', region: 'lon1', size: '512mb', image: 'CentOS-6-5-x64')
+  lb01_result = @client.droplets.create(lb01)
+  lb02 = DropletKit::Droplet.new(name: 'loadbalancer02', region: 'lon1', size: '512mb', image: 'CentOS-6-5-x64')
+  lb02_result = @client.droplets.create(lb02)
+  puts "loadbalancer01 id: " + lb01_result.id.to_s
+  puts "loadbalancer02 id: " + lb02_result.id.to_s
+end
+
+def create_floating_ip
+  fip = DropletKit::FloatingIp.new(region: 'lon1') 
+  result = @client.floating_ips.create(fip) 
+  puts "Floating ip created: " + result.ip
+  @floating_ip = result.ip
+end
+
+def assign_floating_ip(floating_ip, node)
+  @client.floating_ip_actions.assign(ip: floating_ip, droplet_id: node)
+end
+
+def failover(floating_ip, node1id, node2id)
+  # create an array of the node ids
+  node_ids = []
+  node_ids.push(node1id)
+  node_ids.push(node2id)
+  # obtain the floaty ip object
+  floating_ip_object = @client.floating_ips.find(ip: floating_ip)
+  # obtain the id of the droplet to which the floaty ip is currently assigned.
+  current_node_id = floating_ip_object.droplet.id.to_s
+  # remove the current node from node_ids array
+  node_ids.delete(current_node_id)
+  # load the destination node id from the array
+  destination_node_id = node_ids[0]
+  # remove it from current node
+  @client.floating_ip_actions.unassign(ip: floating_ip_object.ip)
+  # Wait for the sharks to catch up.
+  sleep 3
+  # assign it to node 2
+  @client.floating_ip_actions.assign(ip: floating_ip, droplet_id: destination_node_id)
+end
+
+
+# main
+auth
+
+if command == 'createloadbalancers'
+  create_loadbalancers
+end
+
+if command == 'createfloatingip'
+  create_floating_ip
+end
+
+if command == 'assignfloatingip'
+  usage = 'cluster-monkey assignfloatingip <floating ip> <node>'
+  if ARGV.length != 3
+    puts usage
+    exit(1)
+  end
+  floating_ip = ARGV[1]
+  node = ARGV[2]
+  assign_floating_ip(floating_ip, node)
+end
+
+if command == 'failover'
+  usage = 'cluster-monkey failover <floating ip> <node1.id> <node2.id>'
+  if ARGV.length != 4
+    puts usage
+    exit(1) 
+  end
+  floating_ip = ARGV[1]
+  node1id = ARGV[2]
+  node2id = ARGV[3]
+  failover(floating_ip, node1id, node2id)
+end
