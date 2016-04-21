@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-#ils 
+# ils 
 require 'droplet_kit'
 
 usage = 'cluster-monkey <command>'

@@ -1,4 +1,7 @@
 #!/usr/bin/ruby
+
+# ils
+
 require 'droplet_kit'
 
 USAGE='delete_droplet <id>'
