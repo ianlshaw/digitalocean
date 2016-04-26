@@ -16,6 +16,7 @@ def auth
   file = File.open('api.key')
   token = file.read
   @client = DropletKit::Client.new(access_token: token)
+  puts "Authentication successful."
 end
 
 def create_loadbalancers
@@ -23,19 +24,21 @@ def create_loadbalancers
   lb01_result = @client.droplets.create(lb01)
   lb02 = DropletKit::Droplet.new(name: 'loadbalancer02', region: 'lon1', size: '512mb', image: 'CentOS-6-5-x64')
   lb02_result = @client.droplets.create(lb02)
-  puts "loadbalancer01 id: " + lb01_result.id.to_s
-  puts "loadbalancer02 id: " + lb02_result.id.to_s
+  puts 'Load Balancers created.'
+  puts 'loadbalancer01 id: ' + lb01_result.id.to_s
+  puts 'loadbalancer02 id: ' + lb02_result.id.to_s
 end
 
 def create_floating_ip
   fip = DropletKit::FloatingIp.new(region: 'lon1') 
   result = @client.floating_ips.create(fip) 
-  puts "Floating ip created: " + result.ip
+  puts 'Floating ip created: ' + result.ip
   @floating_ip = result.ip
 end
 
 def assign_floating_ip(floating_ip, node)
   @client.floating_ip_actions.assign(ip: floating_ip, droplet_id: node)
+  puts "Floating ip assigned to #{node}."
 end
 
 def failover(floating_ip, node1id, node2id)
@@ -57,6 +60,7 @@ def failover(floating_ip, node1id, node2id)
   sleep 3
   # assign it to node 2
   @client.floating_ip_actions.assign(ip: floating_ip, droplet_id: destination_node_id)
+  puts 'Failover successful.'
 end
 
 
