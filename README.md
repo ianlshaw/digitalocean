@@ -7,7 +7,7 @@ Provision clusters with single commands, whoopie.
 
 Usage: 
 |   Command    |       Option        |  Argument #1  |  Argument #2  |
-|--------------|:-------------------:|:-------------:|--------------:|
+| ------------ |:-------------------:|:-------------:| -------------:|
 |cluster-monkey|                     |               |               |
 |              | createloadbalancers |               |               |
 |              | createfloatingip    |               |               |
