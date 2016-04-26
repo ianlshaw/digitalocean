@@ -5,6 +5,13 @@ Here you will find tools I've written which invoke the DigitalOcean API.
 ### ClusterMonkey
 Provision clusters with single commands, whoopie.
 
+Usage:  
+`cluster-monkey`
+                createloadbalancers
+                createfloatingip
+                assignfloatingip <floating ip> <nodeid>
+                failover         <node1id> <node2id>
+
 [Example](https://asciinema.org/a/43608)
 
 ### Note about keys
