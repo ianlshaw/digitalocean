@@ -6,7 +6,7 @@ Here you will find tools I've written which invoke the DigitalOcean API.
 Provision clusters with single commands, whoopie.
 
 Usage:  
-`cluster-monkey`
+`cluster-monkey`  
                 createloadbalancers
                 createfloatingip
                 assignfloatingip <floating ip> <nodeid>
