@@ -2,6 +2,11 @@
 
 Here you will find tools I've written which invoke the DigitalOcean API.
 
+### ClusterMonkey
+Provision clusters with single commands, whoopie.
+
+[Example](https://asciinema.org/a/43608)
+
 ### Note about keys
 At the moment, the best solution I can think of is to keep the api key in a file in the same directory as the repo, but not include it. That way you can simply read from this file for each script, removing the need to commit the key. Its also pretty nice for renewing keys, or using other ones.
 
